@@ -50,8 +50,20 @@ public class TestContractsImpl {
         // Call the method
         List<News> news = contracts.retrieveNews(10);
         Assertions.assertNotNull(news, "List was null :(");
-        Assertions.assertTrue(news.size() != 0, "Empty List? :(");
-        Assertions.assertTrue(news.size()==10, "List size != 5 :(");
+        Assertions.assertFalse(news.isEmpty(), "Empty List? :(");
+        Assertions.assertEquals(10,news.size(), "List size != 5 :(");
+
+        //debug to log
+        for (News n : news){
+            log.debug("News: {}", n);
+        }
+
+        // size = 0
+        Assertions.assertEquals(0,contracts.retrieveNews(0).size(), "List != 0");
+        // size = 3
+        Assertions.assertEquals(3,contracts.retrieveNews(3).size(), "List != 3");
+        // size = 10
+        Assertions.assertTrue(contracts.retrieveNews(10).size() <= 10, "List size != 10 :(");
         log.debug("Done.");
     }
 

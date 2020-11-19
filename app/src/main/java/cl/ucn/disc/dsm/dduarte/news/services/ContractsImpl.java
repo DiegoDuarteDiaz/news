@@ -12,6 +12,9 @@
 
 package cl.ucn.disc.dsm.dduarte.news.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,13 +24,37 @@ import cl.ucn.disc.dsm.dduarte.news.model.News;
  * @author Diego Duarte Diaz
  */
 public class ContractsImpl implements Contracts {
+
+    /**
+     * The Logger
+     */
+    private static final Logger log = LoggerFactory.getLogger(ContractsImpl.class);
+
+    /**
+     * The list of news
+     */
+    private final List<News> news = new ArrayList<>();
+
+    /**
+     * Get the list of news
+     * @param size size of the list.
+     * @return List of News
+     */
+
     @Override
     public List<News> retrieveNews(final Integer size) {
-        //The list of news
-        final List<News> news = new ArrayList<>();
-
-        //TODO: Add the faker news to the list
-
-        return news;
+        //The last "size" elements.
+        return news.subList(news.size() - size, news.size());
     }
+
+    /**
+     * Save one News into the System
+     * @param news to save
+     */
+    @Override
+    public void saveNews (final News news){
+        //Fixme: Don't allow duplicated!!
+        this.news.add(news);
+    }
+
 }
