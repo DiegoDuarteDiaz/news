@@ -12,7 +12,11 @@
 
 package cl.ucn.disc.dsm.dduarte.news.model;
 
+import net.openhft.hashing.LongHashFunction;
+
 import org.threeten.bp.ZonedDateTime;
+
+import cl.ucn.disc.dsm.dduarte.news.utils.Validation;
 
 /**
  * The Domain model: News
@@ -22,44 +26,43 @@ public class News {
     /**
      * Unique id.
      */
-    private Long id;
+    private final Long id;
     /**
      * The Title.
      * Restrictions: not null, size > 2
      */
-    private String title;
+    private final String title;
     /**
      * The Source
      */
-    private String source;
+    private final String source;
     /**
      * The Author
      */
-    private String author;
+    private final String author;
     /**
      * The URL
      */
-    private String url;
+    private final String url;
     /**
      * The URL of image
      */
-    private String urlImage;
+    private final String urlImage;
     /**
      * The Description
      */
-    private String description;
+    private final String description;
     /**
      * The Content
      */
-    private String content;
+    private final String content;
     /**
      * The Date of publish
      */
-    private ZonedDateTime publishedAt;
+    private final ZonedDateTime publishedAt;
 
     /**
      * The Constructor.
-     * @param id
      * @param title
      * @param source
      * @param author
@@ -69,15 +72,32 @@ public class News {
      * @param content
      * @param publishedAt
      */
-    public News(Long id, String title, String source, String author, String url, String urlImage, String description, String content, ZonedDateTime publishedAt) {
-        this.id = id;
+    public News(String title, String source, String author, String url, String urlImage, String description, String content, ZonedDateTime publishedAt) {
+
+        // Validacion de title
+        Validation.minSize(title, 2, "title");
         this.title = title;
+
+        // Validacion de source
+        Validation.minSize(source, 2, "source");
         this.source = source;
+        // Validacion de author
+        Validation.minSize(author, 2, "author");
         this.author = author;
+
+        // Apply the xxHash function
+        this.id = LongHashFunction.xx().hashChars(title + "|" + source + "|" + author);
+
         this.url = url;
         this.urlImage = urlImage;
         this.description = description;
+
+        // Validacion de contenido
+        Validation.notNull(content, "content");
         this.content = content;
+        
+        // Validacion de publishedAt
+        Validation.notNull(publishedAt, "publishedAt");
         this.publishedAt = publishedAt;
     }
 

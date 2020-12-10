@@ -50,4 +50,9 @@ dependencies {
     // Java Faker!
     implementation 'com.github.javafaker:javafaker:1.0.2'
 
+    // Apache commans lang
+    implementation 'org.apache.commons:commons-lang3:3.11'
+
+    // Hashing libraries: https://github.com/OpenHFT/Zero-Allocation-Hashing
+    implementation 'net.openhft:zero-allocation-hashing:0.12'
 }
