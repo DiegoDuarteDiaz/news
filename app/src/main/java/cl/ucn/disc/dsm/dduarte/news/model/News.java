@@ -12,6 +12,8 @@
 
 package cl.ucn.disc.dsm.dduarte.news.model;
 
+import androidx.annotation.NonNull;
+
 import net.openhft.hashing.LongHashFunction;
 
 import org.threeten.bp.ZonedDateTime;
@@ -155,5 +157,12 @@ public class News {
      */
     public ZonedDateTime getPublishedAt() {
         return publishedAt;
+    }
+
+    //TODO: Remove after testing
+    @NonNull
+    @Override
+    public String toString() {
+        return this.title;
     }
 }

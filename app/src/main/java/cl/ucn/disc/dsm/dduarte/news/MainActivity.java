@@ -21,15 +21,30 @@
 
 package cl.ucn.disc.dsm.dduarte.news;
 
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Bundle;
+import java.util.List;
+
+import cl.ucn.disc.dsm.dduarte.news.model.News;
+import cl.ucn.disc.dsm.dduarte.news.services.ContractImplNewsApi;
+import cl.ucn.disc.dsm.dduarte.news.services.Contracts;
 
 /**
  * The Main Class
  * @author Diego Duarte Diaz
  */
 public class MainActivity extends AppCompatActivity {
+
+    /**
+     * The ListView.
+     */
+    protected ListView listView;
+
     /**
      * OnCreate.
      * @param savedInstanceState used to reload the app.
@@ -38,5 +53,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        this.listView = findViewById(R.id.am_lv_news);
+
+        //Get the news in the background thread
+        AsyncTask.execute(()->{
+            //Using the contracts to get the news
+            Contracts contracts = new ContractImplNewsApi("ffb8d49a73ad48b88608e103b0537e01");
+            //Get the News from NewsApi (internet)
+            List<News> listNews = contracts.retrieveNews(30);
+            //Build the simple adapter to show the list of news (string)
+            ArrayAdapter<String> adapter = new ArrayAdapter(
+                    this, android.R.layout.simple_list_item_1, listNews
+            );
+            //Set the adapter!
+            runOnUiThread(() ->{
+                this.listView.setAdapter(adapter);
+            });
+
+        });
     }
 }
