@@ -23,16 +23,24 @@ package cl.ucn.disc.dsm.dduarte.news;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.mikepenz.fastadapter.FastAdapter;
+import com.mikepenz.fastadapter.adapters.ModelAdapter;
 
 import java.util.List;
 
+import cl.ucn.disc.dsm.dduarte.news.activities.NewsItem;
 import cl.ucn.disc.dsm.dduarte.news.model.News;
 import cl.ucn.disc.dsm.dduarte.news.services.ContractImplNewsApi;
 import cl.ucn.disc.dsm.dduarte.news.services.Contracts;
+
+;
 
 /**
  * The Main Class
@@ -53,7 +61,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.listView = findViewById(R.id.am_lv_news);
+
+        // The FastAdapter
+        ModelAdapter<News, NewsItem> newsAdapter = new ModelAdapter<>(NewsItem::new);
+        FastAdapter<NewsItem> fastAdapter = FastAdapter.with(newsAdapter);
+        fastAdapter.withSelectable(false);
+
+        // The Recycler view
+        RecyclerView recyclerView = findViewById(R.id.am_rv_news);
+        recyclerView.setAdapter(fastAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         //Get the news in the background thread
         AsyncTask.execute(()->{
@@ -61,13 +79,13 @@ public class MainActivity extends AppCompatActivity {
             Contracts contracts = new ContractImplNewsApi("ffb8d49a73ad48b88608e103b0537e01");
             //Get the News from NewsApi (internet)
             List<News> listNews = contracts.retrieveNews(30);
-            //Build the simple adapter to show the list of news (string)
+            /*//Build the simple adapter to show the list of news (string)
             ArrayAdapter<String> adapter = new ArrayAdapter(
                     this, android.R.layout.simple_list_item_1, listNews
-            );
+            );*/
             //Set the adapter!
             runOnUiThread(() ->{
-                this.listView.setAdapter(adapter);
+                newsAdapter.add(listNews);
             });
 
         });
