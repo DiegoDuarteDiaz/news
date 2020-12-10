@@ -81,6 +81,7 @@ public class News {
         // Validacion de source
         Validation.minSize(source, 2, "source");
         this.source = source;
+
         // Validacion de author
         Validation.minSize(author, 2, "author");
         this.author = author;
@@ -95,7 +96,7 @@ public class News {
         // Validacion de contenido
         Validation.notNull(content, "content");
         this.content = content;
-        
+
         // Validacion de publishedAt
         Validation.notNull(publishedAt, "publishedAt");
         this.publishedAt = publishedAt;

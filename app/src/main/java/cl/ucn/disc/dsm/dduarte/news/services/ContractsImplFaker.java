@@ -36,7 +36,7 @@ public final class ContractsImplFaker implements Contracts {
 
         for(int i = 0; i<5; i++){
             this.news.add(new News(
-                Integer.toUnsignedLong(1),
+                //Integer.toUnsignedLong(1),
                 faker.book().title(),
                 faker.name().username(),
                 faker.name().fullName(),
