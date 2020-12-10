@@ -17,14 +17,34 @@ android {
     }
 
     buildTypes {
-        release {
+        debug{
+            debuggable true
             minifyEnabled false
+            shrinkResources false
+            zipAlignEnabled false
+            crunchPngs false
+            versionNameSuffix ".d"
+        }
+        release {
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            zipAlignEnabled true
+            crunchPngs true
+            versionNameSuffix ".r"
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+    //Override the versionCode and versionName
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.versionCodeOverride = project.ext.buildTimestamp
+             output.versionNameOverride = project.ext.buildVersion + (variant.name == "debug" ? ".d" : ".r")
+        }
     }
 }
 
@@ -63,4 +83,11 @@ dependencies {
     implementation "com.squareup.okio:okio:2.9.0"
     implementation "com.google.code.gson:gson:2.8.6"
     implementation "com.squareup.okhttp3:okhttp:4.9.0"
+
+    // LeakCanary
+    debugImplementation 'com.squareup.leakcanary-android:2.5'
+
+    // TODO: IMPORTAR LIBRERIA ACRA
+
+
 }
