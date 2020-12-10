@@ -19,12 +19,17 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.ZoneId;
+import org.threeten.bp.ZonedDateTime;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import cl.ucn.disc.dsm.dduarte.news.model.News;
 import cl.ucn.disc.dsm.dduarte.news.utils.Validation;
@@ -41,11 +46,53 @@ public class ContractImplNewsApi implements Contracts {
      */
     private final NewApiService newsApiServices;
 
+
+
     public ContractImplNewsApi(String apiKey) {
         Validation.notNull(apiKey, "ApiKey !!");
         this.newsApiServices = new NewApiService(apiKey);
     }
 
+    /**
+     * The Assembler/Transformer pattern!
+     *
+     * @param article used to source
+     * @return the News.
+     */
+    private static News toNews(final Article article) {
+        Validation.notNull(article, "Article null !?!");
+        // Warning message?
+        boolean needFix = false;
+        // Fix the author null : (
+        if (article.getAuthor() == null || article.getAuthor().length() == 0) {
+            article.setAuthor("No author*");
+            needFix = true;
+        }
+        // Fix more restrictions :(
+        if (article.getDescription() == null || article.getDescription().length() == 0) {
+            article.setDescription("No description*");
+            needFix = true;
+        }
+
+        // .. yes, warning message.
+        if (needFix) {
+            // Debug of Article
+            log.warn("Article with invalid restrictions: {}.", ToStringBuilder.reflectionToString(article, ToStringStyle.MULTI_LINE_STYLE
+            ));
+        }
+
+        // The date
+        ZonedDateTime publishedAt = ZonedDateTime
+                .parse(article.getPublishedAt())
+                .withZoneSameInstant(ZoneId.of("-3"));
+
+        // The News
+        return new News(
+                article.getTitle(), article.getSource().getName(), article.getAuthor(), article.getUrl(), article.getUrlToImage(), article.getDescription(),
+                article.getDescription(), // FIXME: Where is the content?
+                publishedAt
+        );
+    }
     @Override
     public List<News> retrieveNews(Integer size) {
         try{
@@ -59,12 +106,29 @@ public class ContractImplNewsApi implements Contracts {
                 news.add(article2news(article));
             }
             //return the list of news.
-            return news;
+            return news.stream()
+                    //Remote the duplicates (by id)
+                    .filter(distintById(News::getId))
+                    //Sort the stream by publishedAt
+                    .sorted((k1,k2) -> k2.getPublishedAt().compareTo(k1.getPublishedAt()))
+                    //return the stream to list
+                    .collect(Collectors.toList());
         }catch(IOException e){
             log.error("error", e);
             //Inner exception
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Filter the stream
+     * @param idExtractor
+     * @param <T> news to filter
+     * @return true if the news already exists.
+     */
+    private static <T>Predicate<T>distintById(Function<? super T, ?> idExtractor){
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(idExtractor.apply(t), Boolean.TRUE) == null;
     }
 
     /**
