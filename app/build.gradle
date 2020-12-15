@@ -49,6 +49,8 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+
 
     // JUnit 5
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
