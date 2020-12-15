@@ -2,4 +2,7 @@
     <string name="app_name">News</string>
     <string name="subtitle">subtitle</string>
     <string name="title">title</string>
+    <string name="night_mode">title</string>
+    <string name="day_mode">title</string>
+
 </resources>

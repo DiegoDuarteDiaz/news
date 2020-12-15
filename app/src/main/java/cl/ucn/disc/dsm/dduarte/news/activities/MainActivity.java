@@ -14,13 +14,14 @@ package cl.ucn.disc.dsm.dduarte.news.activities;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 
 import com.mikepenz.fastadapter.FastAdapter;
 import com.mikepenz.fastadapter.adapters.ModelAdapter;
@@ -84,5 +85,19 @@ public class MainActivity extends AppCompatActivity {
             });
 
         });
+    }
+
+    //TODO: Arreglar el boton para cambiar el tema
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // ** getMenuInflater().inflate(R.menu.main_menu, menu); **
+        // Change the label of the menu based on the state of the app.
+        int nightMode = AppCompatDelegate.getDefaultNightMode();
+        if(nightMode == AppCompatDelegate.MODE_NIGHT_YES){
+            //  ** menu.findItem(R.id.night_mode).setTitle(R.string.day_mode); **
+        } else{
+            // ** menu.findItem(R.id.night_mode).setTitle(R.string.night_mode); **
+        }
+        return true;
     }
 }
